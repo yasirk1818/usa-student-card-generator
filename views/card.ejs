@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student ID Card - <%= cardData.firstName %> <%= cardData.lastName %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <i class="fas fa-id-card"></i>
+                <h1>Student ID Card Generated Successfully!</h1>
+                <p>Your professional student identification card is ready</p>
+            </div>
+        </header>
+
+        <div class="card-container">
+            <div class="student-card" id="studentCard">
+                <!-- Security Pattern Background -->
+                <div class="security-pattern"></div>
+                
+                <!-- Hologram Overlay Effect -->
+                <div class="hologram-overlay"></div>
+                
+                <!-- Card Header -->
+                <div class="card-header">
+                    <div class="header-content-wrapper">
+                        <div class="university-seal">
+                            <div class="seal-circle">
+                                <% if (cardData.logoPath) { %>
+                                    <img src="/uploads/<%= cardData.logoPath %>" alt="University Logo" class="university-logo">
+                                <% } else { %>
+                                    <div class="seal-inner">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="header-text">
+                            <div class="university-name"><%= cardData.university %></div>
+                            <div class="card-title">STUDENT IDENTIFICATION CARD</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Card Content -->
+                <div class="card-content">
+                    <!-- Student Photo Section -->
+                    <div class="photo-section">
+                        <img src="/uploads/<%= cardData.photoPath %>" alt="Student Photo" class="student-photo">
+                    </div>
+                    
+                    <!-- Student Information Section -->
+                    <div class="info-section">
+                        <div class="student-name">
+                            <%= cardData.firstName %> <%= cardData.lastName %>
+                        </div>
+                        
+                        <div class="student-details">
+                            <div class="detail-row">
+                                <span class="detail-label">ID:</span>
+                                <span class="detail-value"><%= cardData.studentId %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">DOB:</span>
+                                <span class="detail-value"><%= new Date(cardData.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Department:</span>
+                                <span class="detail-value"><%= cardData.department %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Year:</span>
+                                <span class="detail-value"><%= cardData.graduationYear %></span>
+                            </div>
+                            <% if (cardData.phone) { %>
+                            <div class="detail-row">
+                                <span class="detail-label">Phone:</span>
+                                <span class="detail-value"><%= cardData.phone %></span>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <!-- QR Code Section -->
+                    <div class="qr-section">
+                        <img src="<%= cardData.qrCode %>" alt="QR Code" class="qr-code">
+                        <div class="qr-label">Scan Me</div>
+                    </div>
+                </div>
+                
+                <!-- Card Footer with Security Info -->
+                <div class="card-footer">
+                    <div class="issue-info">
+                        <strong>Issued</strong>
+                        <span><%= cardData.issueDate %></span>
+                    </div>
+                    <div class="security-code">
+                        <strong>Card ID</strong>
+                        <span><%= cardData.cardId.substring(0, 8).toUpperCase() %></span>
+                    </div>
+                    <div class="expiry-info">
+                        <strong>Expires</strong>
+                        <span><%= cardData.expiryDate %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Back Design -->
+        <div class="card-container" style="margin-top: 40px;">
+            <div class="student-card card-back" id="studentCardBack">
+                <!-- Security Pattern Background -->
+                <div class="security-pattern"></div>
+                
+                <!-- Hologram Overlay Effect -->
+                <div class="hologram-overlay"></div>
+                
+                <div class="card-back-content">
+                    <div class="card-back-header">
+                        <h3>Terms and Conditions</h3>
+                    </div>
+                    
+                    <div class="terms-content">
+                        <ul>
+                            <li>This card is the property of <%= cardData.university %></li>
+                            <li>Must be carried at all times on campus</li>
+                            <li>Report lost or stolen cards immediately</li>
+                            <li>Non-transferable - for identified student only</li>
+                            <li>Valid for academic year <%= new Date().getFullYear() %>-<%= parseInt(new Date().getFullYear()) + 1 %></li>
+                        </ul>
+                        
+                        <% if (cardData.emergencyContact) { %>
+                        <div class="emergency-contact-section">
+                            <h4>Emergency Contact Information</h4>
+                            <p><strong>Emergency Contact:</strong> <%= cardData.emergencyContact %></p>
+                            <p><strong>Student:</strong> <%= cardData.firstName %> <%= cardData.lastName %></p>
+                            <p><strong>Student ID:</strong> <%= cardData.studentId %></p>
+                        </div>
+                        <% } %>
+                    </div>
+                    
+                    <div class="magnetic-stripe"></div>
+                    
+                    <div class="barcode-section">
+                        <div class="barcode">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar wide"></div>
+                            <div class="bar"></div>
+                            <div class="bar wide"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar wide"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar wide"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar wide"></div>
+                        </div>
+                        <div class="barcode-number"><%= cardData.studentId %></div>
+                    </div>
+                    
+                    <div class="help-info">
+                        <p><strong>Lost Card?</strong> Visit Student Services</p>
+                        <p><strong>Campus Security:</strong> 911</p>
+                        <% if (cardData.emergencyContact) { %>
+                        <p><strong>Emergency Contact:</strong> <%= cardData.emergencyContact %></p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-container">
+            <button class="download-btn" onclick="downloadCard()">
+                <i class="fas fa-download"></i>
+                Download Card (Front)
+            </button>
+            <button class="download-btn" onclick="downloadCardBack()" style="margin-left: 15px;">
+                <i class="fas fa-download"></i>
+                Download Card (Back)
+            </button>
+        </div>
+
+        <div class="actions-container" style="text-align: center; margin: 30px 0;">
+            <a href="/" class="generate-btn" style="text-decoration: none; margin-right: 15px;">
+                <i class="fas fa-plus"></i>
+                Generate Another Card
+            </a>
+            <button class="generate-btn" onclick="window.print()" style="background: linear-gradient(45deg, #e74c3c, #c0392b);">
+                <i class="fas fa-print"></i>
+                Print Card
+            </button>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2024 USA Student ID Card Generator. Professional ID cards with security features.</p>
+        </footer>
+    </div>
+
+    <style>
+        /* Additional styles for card back */
+        .card-back {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        
+        .card-back-content {
+            padding: 25px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+        }
+        
+        .card-back-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .terms-content ul {
+            list-style: none;
+            padding: 0;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+        
+        .terms-content li {
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        .terms-content li::before {
+            content: "•";
+            color: #3498db;
+            position: absolute;
+            left: 0;
+        }
+        
+        .magnetic-stripe {
+            height: 15px;
+            background: linear-gradient(90deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            margin: 15px 0;
+            border-radius: 2px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .barcode-section {
+            text-align: center;
+        }
+        
+        .barcode {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-bottom: 5px;
+        }
+        
+        .bar {
+            width: 3px;
+            height: 30px;
+            background: white;
+        }
+        
+        .bar.wide {
+            width: 6px;
+        }
+        
+        .barcode-number {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 2px;
+        }
+        
+        .help-info {
+            font-size: 0.7rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .help-info p {
+            margin: 3px 0;
+        }
+        
+        .emergency-contact-section {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .emergency-contact-section h4 {
+            font-size: 0.9rem;
+            color: #3498db;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .emergency-contact-section p {
+            font-size: 0.8rem;
+            margin: 4px 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .header, .download-container, .actions-container, .footer {
+                display: none;
+            }
+            .student-card {
+                box-shadow: none;
+                page-break-after: always;
+            }
+        }
+    </style>
+
+    <script src="/js/main.js"></script>
+    <script>
+        function downloadCardBack() {
+            const card = document.getElementById('studentCardBack');
+            if (card && typeof html2canvas !== 'undefined') {
+                html2canvas(card, {
+                    backgroundColor: null,
+                    scale: 2,
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'student_id_card_back.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            }
+        }
+        
+        function downloadCard() {
+            const card = document.getElementById('studentCard');
+            if (card && typeof html2canvas !== 'undefined') {
+                html2canvas(card, {
+                    backgroundColor: null,
+                    scale: 2,
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'student_id_card_front.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
